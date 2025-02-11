@@ -7,7 +7,6 @@ sequenceDiagram
     participant video-queue
     participant video-processor
     participant storage
-    participant retry-queue
     participant notification-queue
     
     video-processor->>video-queue: consume
