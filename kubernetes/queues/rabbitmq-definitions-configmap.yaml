@@ -58,44 +58,6 @@ data:
           }
         },
         {
-          "name": "clipshot-upload-queue",
-          "vhost": "/",
-          "durable": true,
-          "arguments": {
-            "x-queue-type": "quorum",
-            "x-dead-letter-exchange": "upload-exchange",
-            "x-dead-letter-routing-key": "clipshot-upload-dlq",
-            "x-delivery-limit": 3
-          }
-        },
-        {
-          "name": "clipshot-upload-dlq",
-          "vhost": "/",
-          "durable": true,
-          "arguments": {
-            "x-dead-letter-exchange": ""
-          }
-        },
-        {
-          "name": "clipshot-processor-queue",
-          "vhost": "/",
-          "durable": true,
-          "arguments": {
-            "x-queue-type": "quorum",
-            "x-dead-letter-exchange": "processor-exchange",
-            "x-dead-letter-routing-key": "clipshot-processor-dlq",
-            "x-delivery-limit": 3
-          }
-        },
-        {
-          "name": "clipshot-processor-dlq",
-          "vhost": "/",
-          "durable": true,
-          "arguments": {
-            "x-dead-letter-exchange": ""
-          }
-        },
-        {
           "name": "notification-queue",
           "vhost": "/",
           "durable": true
@@ -133,20 +95,6 @@ data:
           "destination": "clipshot-video-dlq",
           "destination_type": "queue",
           "routing_key": "video-dlq",
-          "vhost": "/"
-        },
-        {
-          "source": "upload-exchange",
-          "destination": "clipshot-upload-dlq",
-          "destination_type": "queue",
-          "routing_key": "clipshot-upload-dlq",
-          "vhost": "/"
-        },
-        {
-          "source": "processor-exchange",
-          "destination": "clipshot-processor-dlq",
-          "destination_type": "queue",
-          "routing_key": "clipshot-processor-dlq",
           "vhost": "/"
         },
         {
