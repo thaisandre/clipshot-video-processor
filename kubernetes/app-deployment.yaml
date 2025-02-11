@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clipshot-video-processor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: clipshot-video-processor
+  template:
+    metadata:
+      labels:
+        app: clipshot-video-processor
+    spec:
+      containers:
+        - name: clipshot-app
+          image: thaisandre/clipshot-video-processor:latest
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - secretRef:
+                name: app-secrets
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: clipshot-video-processor
+spec:
+  type: ClusterIP
+  selector:
+    app: clipshot-video-processor
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080

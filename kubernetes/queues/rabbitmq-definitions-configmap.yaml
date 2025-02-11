@@ -1,0 +1,161 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rabbitmq-definitions
+  namespace: default  # Use o namespace adequado, se necessário
+data:
+  definitions.json: |
+    {
+      "users": [
+        {
+      	  "name": "guest",
+          "password": "guest",
+          "tags": "administrator",
+          "limits": {}
+        }
+      ],
+      "vhosts": [
+        {
+           "name": "/"
+        }
+      ],
+      "permissions": [
+        {
+          "user": "guest",
+          "vhost": "/",
+          "configure": ".*",
+          "write": ".*",
+          "read": ".*"
+        }
+      ],
+      "topic_permissions": [],
+      "parameters": [],
+      "global_parameters": [
+          {
+            "name": "cluster_name",
+            "value": "rabbitmq-cluster"
+          }
+      ],
+      "policies": [],
+      "queues": [
+        {
+          "name": "clipshot-video-queue",
+          "vhost": "/",
+          "durable": true,
+          "arguments": {
+            "x-queue-type": "quorum",
+            "x-dead-letter-exchange": "video-exchange",
+            "x-dead-letter-routing-key": "video-dlq",
+            "x-delivery-limit": 3
+          }
+        },
+        {
+          "name": "clipshot-video-dlq",
+          "vhost": "/",
+          "durable": true,
+          "arguments": {
+            "x-dead-letter-exchange": ""
+          }
+        },
+        {
+          "name": "clipshot-upload-queue",
+          "vhost": "/",
+          "durable": true,
+          "arguments": {
+            "x-queue-type": "quorum",
+            "x-dead-letter-exchange": "upload-exchange",
+            "x-dead-letter-routing-key": "clipshot-upload-dlq",
+            "x-delivery-limit": 3
+          }
+        },
+        {
+          "name": "clipshot-upload-dlq",
+          "vhost": "/",
+          "durable": true,
+          "arguments": {
+            "x-dead-letter-exchange": ""
+          }
+        },
+        {
+          "name": "clipshot-processor-queue",
+          "vhost": "/",
+          "durable": true,
+          "arguments": {
+            "x-queue-type": "quorum",
+            "x-dead-letter-exchange": "processor-exchange",
+            "x-dead-letter-routing-key": "clipshot-processor-dlq",
+            "x-delivery-limit": 3
+          }
+        },
+        {
+          "name": "clipshot-processor-dlq",
+          "vhost": "/",
+          "durable": true,
+          "arguments": {
+            "x-dead-letter-exchange": ""
+          }
+        },
+        {
+          "name": "notification-queue",
+          "vhost": "/",
+          "durable": true
+        }
+      ],
+      "exchanges": [
+        {
+          "name": "video-exchange",
+          "type": "direct",
+          "durable": true,
+          "vhost": "/"
+        },
+        {
+          "name": "upload-exchange",
+          "type": "direct",
+          "durable": true,
+          "vhost": "/"
+        },
+        {
+          "name": "processor-exchange",
+          "type": "direct",
+          "durable": true,
+          "vhost": "/"
+        },
+        {
+          "name": "notification-exchange",
+          "type": "direct",
+          "durable": true,
+          "vhost": "/"
+        }
+      ],
+      "bindings": [
+        {
+          "source": "video-exchange",
+          "destination": "clipshot-video-dlq",
+          "destination_type": "queue",
+          "routing_key": "video-dlq",
+          "vhost": "/"
+        },
+        {
+          "source": "upload-exchange",
+          "destination": "clipshot-upload-dlq",
+          "destination_type": "queue",
+          "routing_key": "clipshot-upload-dlq",
+          "vhost": "/"
+        },
+        {
+          "source": "processor-exchange",
+          "destination": "clipshot-processor-dlq",
+          "destination_type": "queue",
+          "routing_key": "clipshot-processor-dlq",
+          "vhost": "/"
+        },
+        {
+          "source": "notification-exchange",
+          "destination": "notification-queue",
+          "destination_type": "queue",
+          "routing_key": "notification-routing-key",
+          "vhost": "/"
+        }
+      ]
+    }
+
